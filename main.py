@@ -1,7 +1,6 @@
 import pygame
 import time
-import math
-import numpy as np
+import random
 
 PG_INITIALIZED = False
 width = 0
@@ -50,26 +49,41 @@ def updating_window():
     clock.tick(FPS)
 
 
-
 class Birb:
 
-    def __init__(self):
+    def __init__(self, acc):
         global height, width, screen
         init_check()
         self.vPos = height / 2
         self.hPos = width / 2.5
+        self.vel = 0
+        self.acc = acc
 
     def update(self):
-        pass
+        self.vel += self.acc
+        self.vPos += self.vel
 
     def animate(self):
         pygame.draw.circle(screen, (255, 255, 255), (self.hPos, self.vPos), 20)
 
+    def collision_detection(self):
+        if 0 > self.vPos or self.vPos > height:
+            exit()
+
+    def space_pressed(self):
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    self.vel = -8
+
 
 class Pipes:
 
-    def __init__(self):
-        pass
+    def __init__(self, space):
+        self.space = space
+        self.pos = 0
+        self.pipelist = []
+        # pipelist = [x - 1 for x in pipelist]
 
     def update(self):
         pass
@@ -80,9 +94,13 @@ class Pipes:
 
 if __name__ == '__main__':
     pg_init(None, 1000, 500, 100)
-    birb = Birb()
+    birb = Birb(0.4)
+    pipes = Pipes(150)
 
     while 1:
+        birb.space_pressed()
+        birb.update()
+        birb.collision_detection()
         birb.animate()
 
         updating_window()
