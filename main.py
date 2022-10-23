@@ -86,9 +86,12 @@ class Pipes:
         # pipelist = [x - 1 for x in pipelist]
 
     def update(self):
-        pass
+        self.pos += 1
 
     def animate(self):
+        pygame.draw.rect(screen, (255, 255, 255), (width - self.pos, 0, 50, height))
+
+    def setPipes(self):
         pass
 
 
@@ -97,10 +100,24 @@ if __name__ == '__main__':
     birb = Birb(0.4)
     pipes = Pipes(150)
 
+    birb.animate()
+    updating_window()
+
+    whilebreak = True
+    while whilebreak:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    whilebreak = False
+                    birb.vel = -8
+
     while 1:
         birb.space_pressed()
         birb.update()
         birb.collision_detection()
         birb.animate()
+
+        pipes.update()
+        pipes.animate()
 
         updating_window()
