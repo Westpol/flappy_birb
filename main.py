@@ -6,8 +6,8 @@ PG_INITIALIZED = False
 width = 0
 height = 0
 FPS = 1
-screen = None
-clock = None
+screen = pygame.display.set_mode((0, 0))
+clock = pygame.time.Clock()
 
 
 def init_check():
@@ -82,21 +82,26 @@ class Pipes:
     def __init__(self, space):
         self.space = space
         self.pos = 0
-        self.pipelist = []
+        self.pipelist = [(width + 200, random.randint(50, height - self.space - 50))]
+        self.pipeNum = 1
         # pipelist = [x - 1 for x in pipelist]
 
     def update(self):
-        self.pos += 1
+        self.pos += 2
 
     def animate(self):
-        pygame.draw.rect(screen, (255, 255, 255), (width - self.pos, 0, 50, height))
+        for pipe in self.pipelist:
+            pygame.draw.rect(screen, (255, 255, 255), (pipe[0] - self.pos, 0, 50, pipe[1]))
+            pygame.draw.rect(screen, (255, 255, 255), (pipe[0] - self.pos, pipe[1] + self.space, 50, height - (pipe[1] + self.space)))
 
     def setPipes(self):
-        pass
+        if self.pos > self.pipeNum * 300:
+            self.pipeNum += 1
+            self.pipelist.append((width + self.pipeNum * 300, random.randint(50, height - self.space - 50)))
 
 
 if __name__ == '__main__':
-    pg_init(None, 1000, 500, 100)
+    pg_init(pygame.FULLSCREEN, 0, 0, 100)
     birb = Birb(0.4)
     pipes = Pipes(150)
 
@@ -119,5 +124,6 @@ if __name__ == '__main__':
 
         pipes.update()
         pipes.animate()
+        pipes.setPipes()
 
         updating_window()
