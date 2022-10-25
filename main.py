@@ -17,6 +17,13 @@ height = 0
 FPS = 1
 screen = pygame.display.set_mode((0, 0))
 clock = pygame.time.Clock()
+deltaT = 0
+lasttime = 0
+pipeWidth = 75
+
+
+def factor():
+    return deltaT / 10
 
 
 def init_check():
@@ -70,8 +77,10 @@ class Birb:
         self.acc = acc
 
     def update(self):
-        self.vel += self.acc
-        self.vPos += self.vel
+        self.vel += self.acc * factor()
+        self.vPos += self.vel * factor()
+        #self.vel += self.acc
+        #self.vPos += self.vel
 
     def animate(self):
         pygame.draw.circle(screen, (255, 255, 255), (self.hPos, self.vPos), 20)
@@ -98,18 +107,17 @@ class Pipes:
         # pipelist = [x - 1 for x in pipelist]
 
     def update(self):
-        self.pos += 2
+        self.pos += 2 * factor()
 
     def animate(self):
         for pipe in self.pipelist:
-            pygame.draw.rect(screen, (255, 255, 255), (pipe[0] - self.pos, 0, 50, pipe[1]))
-            pygame.draw.rect(screen, (255, 255, 255), (pipe[0] - self.pos, pipe[1] + self.space, 50, height - (pipe[1] + self.space)))
+            pygame.draw.rect(screen, (255, 255, 255), (pipe[0] - self.pos, 0, pipeWidth, pipe[1]))
+            pygame.draw.rect(screen, (255, 255, 255), (pipe[0] - self.pos, pipe[1] + self.space, pipeWidth, height - (pipe[1] + self.space)))
 
     def setPipes(self):
         if self.pos > self.pipeNum * 300:
             self.pipeNum += 1
             self.pipelist.append((width + self.pipeNum * 300, random.randint(50, height - self.space - 50)))
-            print(len(self.pipelist))
             while 1:
                 is_oob = (0, False)
                 for i in range(len(self.pipelist)):
@@ -135,10 +143,10 @@ class Sound:
 
 
 if __name__ == '__main__':
-    pg_init(pygame.FULLSCREEN, 0, 0, 100)
+    pg_init(pygame.FULLSCREEN, 0, 0, 0)
     s = Sound()
     birb = Birb(0.4)
-    pipes = Pipes(150)
+    pipes = Pipes(175)
 
     birb.animate()
     updating_window()
@@ -153,7 +161,10 @@ if __name__ == '__main__':
 
     s.backgroundMusic()
 
+    lasttime = time.time() * 1000
     while 1:
+        deltaT = time.time() * 1000 - lasttime
+        lasttime = time.time() * 1000
         birb.space_pressed()
         birb.update()
         birb.collision_detection()
