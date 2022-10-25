@@ -1,3 +1,12 @@
+'''
+Background Music:
+
+Monkeys Spinning Monkeys Kevin MacLeod (incompetech.com)
+Licensed under Creative Commons: By Attribution 3.0 License
+http://creativecommons.org/licenses/by/3.0/
+Music promoted by https://www.chosic.com/free-music/all/
+'''
+
 import pygame
 import time
 import random
@@ -21,6 +30,7 @@ def pg_init(windowMode, setWidth: int, setHeight: int, setFPS: int):
     global screen, width, height, FPS, PG_INITIALIZED, clock
 
     pygame.init()
+    pygame.mixer.init()
     FPS = setFPS
     clock = pygame.time.Clock()
     if windowMode == pygame.FULLSCREEN:
@@ -75,6 +85,7 @@ class Birb:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.vel = -8
+                    s.flapp()
 
 
 class Pipes:
@@ -98,10 +109,34 @@ class Pipes:
         if self.pos > self.pipeNum * 300:
             self.pipeNum += 1
             self.pipelist.append((width + self.pipeNum * 300, random.randint(50, height - self.space - 50)))
+            print(len(self.pipelist))
+            while 1:
+                is_oob = (0, False)
+                for i in range(len(self.pipelist)):
+                    if self.pipelist[i][0] - self.pos < - 500:
+                        is_oob = (i, True)
+                if is_oob[1]:
+                    self.pipelist.pop(is_oob[0])
+                else:
+                    break
+
+
+class Sound:
+
+    def __init__(self):
+        self.sound = pygame.mixer.Sound("sounds/BackgroundMusic.mp3")
+        self.flapSound = pygame.mixer.Sound("sounds/flap.wav")
+
+    def backgroundMusic(self):
+        self.sound.play()
+
+    def flapp(self):
+        self.flapSound.play()
 
 
 if __name__ == '__main__':
     pg_init(pygame.FULLSCREEN, 0, 0, 100)
+    s = Sound()
     birb = Birb(0.4)
     pipes = Pipes(150)
 
@@ -115,6 +150,8 @@ if __name__ == '__main__':
                 if event.key == pygame.K_SPACE:
                     whilebreak = False
                     birb.vel = -8
+
+    s.backgroundMusic()
 
     while 1:
         birb.space_pressed()
