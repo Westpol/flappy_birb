@@ -1,5 +1,8 @@
+import pygame
 
-x, y = 175, 200
+screen = pygame.display.set_mode((500, 500))
 
-if (150 < x and 350 > x) and (150 < y and 350 > y):
+x, y = 100, 200
+
+if (150 < x < 350) and (150 < y < 350):
     print("YOLLWO")
