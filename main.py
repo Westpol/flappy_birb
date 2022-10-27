@@ -26,6 +26,12 @@ def factor():
     return deltaT / 10
 
 
+def exit_check(evnt):
+    if evnt.key == pygame.K_ESCAPE:
+        pygame.quit()
+        exit()
+
+
 def init_check():
     print(PG_INITIALIZED)
     if PG_INITIALIZED:
@@ -92,6 +98,7 @@ class Birb:
     def space_pressed(self):
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
+                exit_check(event)
                 if event.key == pygame.K_SPACE:
                     self.vel = -8
                     s.flapp()
@@ -155,6 +162,7 @@ if __name__ == '__main__':
     while whilebreak:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
+                exit_check(event)
                 if event.key == pygame.K_SPACE:
                     whilebreak = False
                     birb.vel = -8
