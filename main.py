@@ -20,6 +20,7 @@ clock = pygame.time.Clock()
 deltaT = 0
 lasttime = 0
 pipeWidth = 75
+circle_radius = 20
 
 
 def factor():
@@ -89,7 +90,7 @@ class Birb:
         #self.vPos += self.vel
 
     def animate(self):
-        pygame.draw.circle(screen, (255, 255, 255), (self.hPos, self.vPos), 20)
+        pygame.draw.circle(screen, (255, 255, 255), (self.hPos, self.vPos), circle_radius)
 
     def collision_detection(self):
         if 0 > self.vPos or self.vPos > height:
@@ -118,8 +119,8 @@ class Pipes:
 
     def animate(self):
         for pipe in self.pipelist:
-            pygame.draw.rect(screen, (255, 255, 255), (pipe[0] - self.pos, 0, pipeWidth, pipe[1]))
-            pygame.draw.rect(screen, (255, 255, 255), (pipe[0] - self.pos, pipe[1] + self.space, pipeWidth, height - (pipe[1] + self.space)))
+            pygame.draw.rect(screen, (255, 255, 255), (pipe[0] - self.pos, -circle_radius, pipeWidth, pipe[1]+circle_radius), 0, circle_radius)
+            pygame.draw.rect(screen, (255, 255, 255), (pipe[0] - self.pos, pipe[1] + self.space, pipeWidth, (height + circle_radius) - (pipe[1] + self.space)), 0, circle_radius)
 
     def setPipes(self):
         if self.pos > self.pipeNum * 300:
