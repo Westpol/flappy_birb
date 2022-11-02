@@ -41,7 +41,6 @@ def exit_check(evnt):
 
 
 def init_check():
-    print(PG_INITIALIZED)
     if PG_INITIALIZED:
         return 0
     raise Exception("pg_init not called at the beginning of the code.")
@@ -156,7 +155,6 @@ class Pipes:
             if birb.hPos > self.pipelist[i][0] - self.pos and not self.pipelist[i][2]:
                 self.pipelist[i] = (self.pipelist[i][0], self.pipelist[i][1], True)
                 birb.score += 1
-                print(birb.score)
 
 
 class Sound:
@@ -170,6 +168,23 @@ class Sound:
 
     def flapp(self):
         self.flapSound.play()
+
+
+class UI:
+
+    def __init__(self):
+        pass
+
+    def animate(self):
+        pygame.draw.rect(screen, (220, 220, 220), (20, 20, 80, 50))
+        myfont = pygame.font.SysFont('arial', 40)
+        frameNumber = myfont.render(str(birb.score), False, (0, 0, 0))
+        screen.blit(frameNumber, (20, 20))
+
+    def show_fps(self):
+        myfont = pygame.font.SysFont('arial', 20)
+        frameNumber = myfont.render(str(int(clock.get_fps())), False, (0, 255, 0))
+        screen.blit(frameNumber, (width - 46, 26))
 
 
 if __name__ == '__main__':
@@ -190,7 +205,8 @@ if __name__ == '__main__':
                     whilebreak = False
                     birb.vel = -8
 
-    #s.backgroundMusic()
+    s.backgroundMusic()
+    ui = UI()
 
     lasttime = time.time() * 1000
     while 1:
@@ -204,5 +220,8 @@ if __name__ == '__main__':
         pipes.update()
         pipes.animate()
         pipes.setPipes()
+
+        ui.animate()
+        ui.show_fps()
 
         updating_window()
