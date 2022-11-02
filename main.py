@@ -23,6 +23,13 @@ pipeWidth = 75
 circle_radius = 20
 
 
+def collision():
+    while 1:
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                exit_check(event)
+
+
 def factor():
     return deltaT / 10
 
@@ -34,7 +41,6 @@ def exit_check(evnt):
 
 
 def init_check():
-    print(PG_INITIALIZED)
     if PG_INITIALIZED:
         return 0
     raise Exception("pg_init not called at the beginning of the code.")
@@ -82,6 +88,7 @@ class Birb:
         self.hPos = width / 2.5
         self.vel = 0
         self.acc = acc
+        self.score = 0
 
     def update(self):
         self.vel += self.acc * factor()
@@ -94,7 +101,13 @@ class Birb:
 
     def collision_detection(self):
         if 0 > self.vPos or self.vPos > height:
-            exit()
+            collision()
+        for pip in pipes.pipelist:
+            if (pip[0] - pipes.pos - circle_radius < self.hPos < pip[0] - pipes.pos + pipeWidth + circle_radius) and (0 < self.vPos < pip[1] + circle_radius):
+                collision()
+        for pip in pipes.pipelist:
+            if (pip[0] - pipes.pos - circle_radius < self.hPos < pip[0] - pipes.pos + pipeWidth + circle_radius) and (pip[1] - circle_radius + pipes.space < self.vPos < height):
+                collision()
 
     def space_pressed(self):
         for event in pygame.event.get():
@@ -110,22 +123,23 @@ class Pipes:
     def __init__(self, space):
         self.space = space
         self.pos = 0
-        self.pipelist = [(width + 200, random.randint(50, height - self.space - 50))]
+        self.pipelist = [(width + 200, random.randint(50, height - self.space - 50), False)]
         self.pipeNum = 1
         # pipelist = [x - 1 for x in pipelist]
 
     def update(self):
         self.pos += 2 * factor()
+        self.updateScore()
 
     def animate(self):
         for pipe in self.pipelist:
-            pygame.draw.rect(screen, (255, 255, 255), (pipe[0] - self.pos, -circle_radius, pipeWidth, pipe[1]+circle_radius), 0, circle_radius)
-            pygame.draw.rect(screen, (255, 255, 255), (pipe[0] - self.pos, pipe[1] + self.space, pipeWidth, (height + circle_radius) - (pipe[1] + self.space)), 0, circle_radius)
+            pygame.draw.rect(screen, (255, 255, 255), (pipe[0] - self.pos, 0, pipeWidth, pipe[1]), 0)
+            pygame.draw.rect(screen, (255, 255, 255), (pipe[0] - self.pos, pipe[1] + self.space, pipeWidth, height - (pipe[1] + self.space)), 0)
 
     def setPipes(self):
         if self.pos > self.pipeNum * 300:
             self.pipeNum += 1
-            self.pipelist.append((width + self.pipeNum * 300, random.randint(50, height - self.space - 50)))
+            self.pipelist.append((width + self.pipeNum * 300, random.randint(50, height - self.space - 50), False))
             while 1:
                 is_oob = (0, False)
                 for i in range(len(self.pipelist)):
@@ -135,6 +149,12 @@ class Pipes:
                     self.pipelist.pop(is_oob[0])
                 else:
                     break
+
+    def updateScore(self):
+        for i in range(len(self.pipelist)):
+            if birb.hPos > self.pipelist[i][0] - self.pos and not self.pipelist[i][2]:
+                self.pipelist[i] = (self.pipelist[i][0], self.pipelist[i][1], True)
+                birb.score += 1
 
 
 class Sound:
@@ -148,6 +168,23 @@ class Sound:
 
     def flapp(self):
         self.flapSound.play()
+
+
+class UI:
+
+    def __init__(self):
+        pass
+
+    def animate(self):
+        pygame.draw.rect(screen, (220, 220, 220), (20, 20, 80, 50))
+        myfont = pygame.font.SysFont('arial', 40)
+        frameNumber = myfont.render(str(birb.score), False, (0, 0, 0))
+        screen.blit(frameNumber, (20, 20))
+
+    def show_fps(self):
+        myfont = pygame.font.SysFont('arial', 20)
+        frameNumber = myfont.render(str(int(clock.get_fps())), False, (0, 255, 0))
+        screen.blit(frameNumber, (width - 46, 26))
 
 
 if __name__ == '__main__':
@@ -169,6 +206,7 @@ if __name__ == '__main__':
                     birb.vel = -8
 
     s.backgroundMusic()
+    ui = UI()
 
     lasttime = time.time() * 1000
     while 1:
@@ -182,5 +220,8 @@ if __name__ == '__main__':
         pipes.update()
         pipes.animate()
         pipes.setPipes()
+
+        ui.animate()
+        ui.show_fps()
 
         updating_window()
