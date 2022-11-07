@@ -30,13 +30,19 @@ def collision():
                 exit_check(event)
 
 
+def physics_tick():
+    global lasttime, deltaT
+    deltaT = time.time() * 1000 - lasttime
+    lasttime = time.time() * 1000
+
+
 def factor():
     return deltaT / 10
 
 
 def exit_check(evnt):
     if evnt.key == pygame.K_ESCAPE:
-        pygame.quit()
+        menu.menuToggle()
         exit()
 
 
@@ -173,18 +179,43 @@ class Sound:
 class UI:
 
     def __init__(self):
-        pass
+        self.arial_40 = pygame.font.SysFont('arial', 40)
+        self.arial_20 = pygame.font.SysFont('arial', 20)
 
     def animate(self):
         pygame.draw.rect(screen, (220, 220, 220), (20, 20, 80, 50))
-        myfont = pygame.font.SysFont('arial', 40)
-        frameNumber = myfont.render(str(birb.score), False, (0, 0, 0))
+        frameNumber = self.arial_40.render(str(birb.score), False, (0, 0, 0))
         screen.blit(frameNumber, (20, 20))
 
     def show_fps(self):
-        myfont = pygame.font.SysFont('arial', 20)
-        frameNumber = myfont.render(str(int(clock.get_fps())), False, (0, 255, 0))
+        frameNumber = self.arial_20.render(str(int(clock.get_fps())), False, (0, 255, 0))
         screen.blit(frameNumber, (width - 46, 26))
+
+
+class Menu:
+
+    def __init__(self):
+        self.menuState = 0
+        self.menuActive = True
+
+    def mainMenu(self):
+        if self.menuActive:
+            while 1:
+                for event in pygame.event.get():
+                    if event.type == pygame.KEYDOWN:
+                        exit_check(event)
+                        break
+
+    def animate(self):
+        pass
+
+    def update(self):
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                exit_check(event)
+
+    def menuToggle(self):
+        self.menuActive = not self.menuActive
 
 
 if __name__ == '__main__':
@@ -196,6 +227,8 @@ if __name__ == '__main__':
     birb.animate()
     updating_window()
 
+    menu = Menu()
+
     whilebreak = True
     while whilebreak:
         for event in pygame.event.get():
@@ -205,13 +238,16 @@ if __name__ == '__main__':
                     whilebreak = False
                     birb.vel = -8
 
-    s.backgroundMusic()
+    #s.backgroundMusic()
     ui = UI()
 
     lasttime = time.time() * 1000
     while 1:
-        deltaT = time.time() * 1000 - lasttime
-        lasttime = time.time() * 1000
+        physics_tick()
+
+        #menu.update()
+        #menu.animate()
+
         birb.space_pressed()
         birb.update()
         birb.collision_detection()
