@@ -191,6 +191,14 @@ class UI:
         frameNumber = self.arial_20.render(str(int(clock.get_fps())), False, (0, 255, 0))
         screen.blit(frameNumber, (width - 46, 26))
 
+    class Keys:
+
+        def __init__(self):
+            pass
+
+        def getPresses(self):
+            pass
+
 
 class Menu:
 
@@ -200,11 +208,13 @@ class Menu:
 
     def mainMenu(self):
         if self.menuActive:
-            while 1:
+            whilebrk = True
+            while whilebrk:
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
-                        exit_check(event)
-                        break
+                        if event.key == pygame.K_p:
+                            whilebrk = False
+                            menu.menuToggle()
 
     def animate(self):
         pass
@@ -240,10 +250,13 @@ if __name__ == '__main__':
 
     #s.backgroundMusic()
     ui = UI()
+    keys = UI.Keys()
 
     lasttime = time.time() * 1000
     while 1:
         physics_tick()
+
+        keys.getPresses()
 
         #menu.update()
         #menu.animate()
