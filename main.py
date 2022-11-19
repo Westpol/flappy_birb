@@ -22,8 +22,11 @@ lasttime = 0
 pipeWidth = 75
 circle_radius = 20
 
+pg_events = pygame.event.get()
+
 
 def collision():
+    print(birb.vPos)
     while 1:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
@@ -116,7 +119,7 @@ class Birb:
                 collision()
 
     def space_pressed(self):
-        for event in pygame.event.get():
+        for event in pg_events:
             if event.type == pygame.KEYDOWN:
                 exit_check(event)
                 if event.key == pygame.K_SPACE:
@@ -210,19 +213,28 @@ class Menu:
         if self.menuActive:
             whilebrk = True
             while whilebrk:
+                self.animate()
                 for event in pygame.event.get():
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_p:
+                            physics_tick()
+                            physics_tick()
                             whilebrk = False
-                            menu.menuToggle()
+                            self.menuToggle()
 
     def animate(self):
-        pass
+        pipes.animate()
+        birb.animate()
+        ui.animate()
+
 
     def update(self):
-        for event in pygame.event.get():
+        for event in pg_events:
             if event.type == pygame.KEYDOWN:
                 exit_check(event)
+                if event.key == pygame.K_p:
+                    self.menuToggle()
+                    self.mainMenu()
 
     def menuToggle(self):
         self.menuActive = not self.menuActive
@@ -239,26 +251,20 @@ if __name__ == '__main__':
 
     menu = Menu()
 
-    whilebreak = True
-    while whilebreak:
-        for event in pygame.event.get():
-            if event.type == pygame.KEYDOWN:
-                exit_check(event)
-                if event.key == pygame.K_SPACE:
-                    whilebreak = False
-                    birb.vel = -8
-
     #s.backgroundMusic()
+
     ui = UI()
     keys = UI.Keys()
 
     lasttime = time.time() * 1000
+    menu.mainMenu()
     while 1:
+        pg_events = pygame.event.get()
         physics_tick()
 
         keys.getPresses()
 
-        #menu.update()
+        menu.update()
         #menu.animate()
 
         birb.space_pressed()
