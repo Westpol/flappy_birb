@@ -21,12 +21,16 @@ deltaT = 0
 lasttime = 0
 pipeWidth = 75
 circle_radius = 20
+highscore = 0
 
 pg_events = pygame.event.get()
 
 
 def collision():
     print(birb.vPos)
+    if birb.score > highscore:
+        with open("score.txt", "w") as scoreFile:
+            scoreFile.write(str(birb.score))
     while 1:
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
@@ -56,7 +60,7 @@ def init_check():
 
 
 def pg_init(windowMode, setWidth: int, setHeight: int, setFPS: int):
-    global screen, width, height, FPS, PG_INITIALIZED, clock
+    global screen, width, height, FPS, PG_INITIALIZED, clock, highscore
 
     pygame.init()
     pygame.mixer.init()
@@ -79,6 +83,8 @@ def pg_init(windowMode, setWidth: int, setHeight: int, setFPS: int):
         print("Mode: Windowed")
     print("Window Dimensions: {0} x {1}".format(width, height))
     PG_INITIALIZED = True
+    with open("score.txt", "r") as highscoreFile:
+        highscore = int(highscoreFile.read())
 
 
 def updating_window():
@@ -186,9 +192,15 @@ class UI:
         self.arial_20 = pygame.font.SysFont('arial', 20)
 
     def animate(self):
-        pygame.draw.rect(screen, (220, 220, 220), (20, 20, 80, 50))
-        frameNumber = self.arial_40.render(str(birb.score), False, (0, 0, 0))
-        screen.blit(frameNumber, (20, 20))
+        x, y, w, h = width/2 - 40, 20, 80, 50   # setting position
+        pygame.draw.rect(screen, (220, 220, 220), (x, y, w, h))     # drawing rect for better contrast
+        score = self.arial_40.render(str(birb.score), False, (0, 0, 0))     #generating text object
+        screen.blit(score, (x, y))  # drawing text object
+
+        x, y, w, h = width - 100, 20, 80, 50
+        pygame.draw.rect(screen, (220, 220, 220), (x, y, w, h))
+        highscoreText = self.arial_40.render(str(highscore), False, (0, 0, 0))
+        screen.blit(highscoreText, (x, y))
 
     def show_fps(self):
         frameNumber = self.arial_20.render(str(int(clock.get_fps())), False, (0, 255, 0))
