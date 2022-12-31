@@ -220,6 +220,8 @@ class Menu:
     def __init__(self):
         self.menuState = 0
         self.menuActive = True
+        self.arial_40 = pygame.font.SysFont('arial', 40)
+        self.arial_20 = pygame.font.SysFont('arial', 20)
 
     def mainMenu(self):
         if self.menuActive:
@@ -238,6 +240,15 @@ class Menu:
         pipes.animate()
         birb.animate()
         ui.animate()
+        self.draw()
+        updating_window()
+
+
+    def draw(self):
+        x, y, w, h = width / 2 - 100, height / 2 - 25, 200, 50  # setting position
+        pygame.draw.rect(screen, (220, 220, 220), (x, y, w, h))  # drawing rect for better contrast
+        score = self.arial_40.render('"p" drücken um fortzufahren', False, (0, 0, 0))  # generating text object
+        screen.blit(score, (x, y))  # drawing text object
 
 
     def update(self):
