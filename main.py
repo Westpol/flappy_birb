@@ -243,13 +243,11 @@ class Menu:
         self.draw()
         updating_window()
 
-
     def draw(self):
         x, y, w, h = width / 2 - 100, height / 2 - 25, 200, 50  # setting position
         pygame.draw.rect(screen, (220, 220, 220), (x, y, w, h))  # drawing rect for better contrast
         score = self.arial_40.render('"p" drücken um fortzufahren', False, (0, 0, 0))  # generating text object
         screen.blit(score, (x, y))  # drawing text object
-
 
     def update(self):
         for event in pg_events:
