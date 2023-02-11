@@ -177,6 +177,7 @@ class Sound:
     def __init__(self):
         self.sound = pygame.mixer.Sound("sounds/BackgroundMusic.mp3")
         self.flapSound = pygame.mixer.Sound("sounds/flap.wav")
+        self.flapSound.set_volume(.25)
 
     def backgroundMusic(self):
         self.sound.play()
