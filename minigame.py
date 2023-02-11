@@ -8,6 +8,7 @@ width, height = pygame.display.get_window_size()
 
 deltaT = 0.0
 lastT = 0.0
+clock = pygame.time.Clock()
 
 
 def tick():
@@ -45,6 +46,7 @@ class Ball:
         pygame.draw.rect(screen, (255, 255, 255), (self.boardPos, height - 100, 300, 30))
 
     def getKeys(self):
+        global running
         for event in pygame.event.get():
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT:
@@ -53,6 +55,8 @@ class Ball:
                 if event.key == pygame.K_RIGHT:
                     self.boardMovement = 3000
                     self.isMoving = True
+                if event.key == pygame.K_ESCAPE:
+                    running = False
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT:
                     self.boardMovement = 0
