@@ -68,8 +68,16 @@ class Ball:
                 self.yVelocity = -self.yVelocity
                 self.xVelocity += random.randint(-300, 300)
 
-        if 0 >= self.xPos or self.xPos >= width:
+        if 0 >= self.xPos or self.xPos + 50 >= width:
             self.xVelocity = -self.xVelocity
+
+        if 0 > self.boardPos:
+            self.boardPos = 0
+            self.boardVelocity = -self.boardVelocity * .3
+
+        if self.boardPos + 300 > width:
+            self.boardPos = width - 300
+            self.boardVelocity = -self.boardVelocity * .3
 
 
 running = True
